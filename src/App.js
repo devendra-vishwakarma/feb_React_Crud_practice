@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import DataTable from './components/DataTable';
+import AddAndUpdateBtn from './components/AddAndUpdateBtn';
+import Home from './components/Home';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [selectedUser, setSelectedUser] = useState(null);
+
+    return (
+        <Routes>
+          {/* <Route path="/" element={<Home/>} /> */}
+            <Route path="/" element={<DataTable setSelectedUser={setSelectedUser} />} />
+            <Route path="/add-update-user" element={<AddAndUpdateBtn selectedUser={selectedUser} setSelectedUser={setSelectedUser} />} />
+        </Routes>
+    );
 }
 
 export default App;
