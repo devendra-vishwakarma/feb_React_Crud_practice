@@ -48,7 +48,7 @@ export default function DataTable({ handleOpen }) {
     };
 
     const filteredData = userData.filter(user =>
-        user.city.toLowerCase().includes(searchCity.toLowerCase())
+        user.city.toLowerCase().includes(debouncedSearchCity.toLowerCase())
     );
 
     return (
@@ -61,7 +61,7 @@ export default function DataTable({ handleOpen }) {
                     label="Search by City"
                     variant="outlined"
                     size="small"
-                    sx={{ marginBottom: "10px" }}
+                    sx={{ marginBottom: "10px",marginTop:"10px" }}
                     value={searchCity}
                     onChange={(e) => setSearchCity(e.target.value)}
                 />
