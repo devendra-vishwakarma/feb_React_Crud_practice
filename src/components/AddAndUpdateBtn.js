@@ -9,6 +9,7 @@ import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate, useLocation } from "react-router-dom";
+import { mpCities } from "./MpCities";
 
 const style = {
     position: "absolute",
@@ -31,7 +32,13 @@ export default function AddAndUpdateBtn({ editDatas = null, editIndexs = null })
     });
     const location = useLocation(); // Get navigation state
     const navigate = useNavigate();
-    const [error, setError] = React.useState(false);
+    const [error, setError] = React.useState({
+        name: false,
+        email: false,
+        mobileNumber: false,
+        city: false,
+    }); // for handle the error with the help of error object
+
     const [open, setOpen] = React.useState(false);
 
     const editData = location.state?.editData || null;
@@ -40,9 +47,9 @@ export default function AddAndUpdateBtn({ editDatas = null, editIndexs = null })
     React.useEffect(() => {
         if (editData) {
             setFormData(editData);
-            setOpen(true); // Open modal if editing
+            setOpen(true); // Open modal if when we edit the user
         } else if (location.pathname === "/add-update-user") {
-            setOpen(true); // Open modal automatically when visiting the add user page
+            setOpen(true);
         }
     }, [location.pathname, editData]);
 
@@ -61,7 +68,15 @@ export default function AddAndUpdateBtn({ editDatas = null, editIndexs = null })
     };
 
     const handleSubmit = () => {
-        if (formData.name && formData.email && formData.mobileNumber && formData.city) {
+        const newError = {
+            name: !formData.name,
+            email: !formData.email,
+            mobileNumber: !formData.mobileNumber,
+            city: !formData.city,
+        };
+        setError(newError);
+
+        if (!Object.values(newError).includes(true)) {
             let existingUsers = JSON.parse(localStorage.getItem("formData")) || [];
             if (!Array.isArray(existingUsers)) {
                 existingUsers = [];
@@ -75,8 +90,6 @@ export default function AddAndUpdateBtn({ editDatas = null, editIndexs = null })
 
             localStorage.setItem("formData", JSON.stringify(existingUsers));
             handleClose();
-        } else {
-            setError(true);
         }
     };
 
@@ -94,6 +107,8 @@ export default function AddAndUpdateBtn({ editDatas = null, editIndexs = null })
                     variant="outlined"
                     fullWidth
                     value={formData.name}
+                    error={error.name}
+                    helperText={error.name ? "Name is required" : ""}
                 />
                 <TextField
                     onChange={handleInputChange}
@@ -103,6 +118,8 @@ export default function AddAndUpdateBtn({ editDatas = null, editIndexs = null })
                     variant="outlined"
                     fullWidth
                     value={formData.email}
+                    error={error.email}
+                    helperText={error.email ? "Email is required" : ""}
                 />
                 <TextField
                     onChange={handleInputChange}
@@ -112,14 +129,17 @@ export default function AddAndUpdateBtn({ editDatas = null, editIndexs = null })
                     variant="outlined"
                     fullWidth
                     value={formData.mobileNumber}
+                    error={error.mobileNumber}
+                    helperText={error.mobileNumber ? "Mobile number is required" : ""}
                 />
                 <FormControl fullWidth sx={{ marginTop: "20px" }}>
                     <InputLabel>City</InputLabel>
-                    <Select value={formData.city} onChange={handleCityChange}>
-                        <MenuItem value={"Indore"}>Indore</MenuItem>
-                        <MenuItem value={"Bhopal"}>Bhopal</MenuItem>
-                        <MenuItem value={"Ujjain"}>Ujjain</MenuItem>
+                    <Select value={formData.city} onChange={handleCityChange} error={error.city}>
+                        {mpCities?.map((value, index) => {
+                            return <MenuItem key={index} value={value}>{value}</MenuItem>;
+                        })}
                     </Select>
+                    {error.city && <Typography color="error" variant="body2">City is required</Typography>}
                 </FormControl>
                 <Button sx={{ marginTop: "20px" }} onClick={handleSubmit} variant="contained" fullWidth>
                     {editIndex !== null ? "Update" : "Submit"}
