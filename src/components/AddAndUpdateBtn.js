@@ -71,7 +71,7 @@ export default function AddAndUpdateBtn({ editDatas = null, editIndexs = null })
         const newError = {
             name: !formData.name,
             email: !formData.email,
-            mobileNumber: !formData.mobileNumber,
+            mobileNumber: !formData.mobileNumber || formData.mobileNumber.length < 9 || formData.mobileNumber.length > 10,
             city: !formData.city,
         };
         setError(newError);
